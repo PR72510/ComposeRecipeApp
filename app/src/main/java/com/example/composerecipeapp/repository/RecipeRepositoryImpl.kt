@@ -3,8 +3,9 @@ package com.example.composerecipeapp.repository
 import com.example.composerecipeapp.domain.model.Recipe
 import com.example.composerecipeapp.network.RecipeService
 import com.example.composerecipeapp.network.model.RecipeDtoMapper
+import javax.inject.Inject
 
-class RecipeRepositoryImpl(
+class RecipeRepositoryImpl @Inject constructor(
     val service: RecipeService,
     val mapper: RecipeDtoMapper
 ) : RecipeRepository {

@@ -5,7 +5,7 @@ import com.example.composerecipeapp.network.RecipeService
 import com.example.composerecipeapp.network.model.RecipeDtoMapper
 import javax.inject.Inject
 
-class RecipeRepositoryImpl @Inject constructor(
+class RecipeRepositoryImpl (
     val service: RecipeService,
     val mapper: RecipeDtoMapper
 ) : RecipeRepository {

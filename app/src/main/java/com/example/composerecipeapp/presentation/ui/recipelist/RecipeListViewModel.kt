@@ -17,14 +17,23 @@ class RecipeListViewModel @Inject constructor(
     @Named("auth_token") val token: String
 ) : ViewModel() {
 
-     val recipes: MutableState<List<Recipe>> = mutableStateOf(listOf())
+    val recipes: MutableState<List<Recipe>> = mutableStateOf(listOf())
+    val query = mutableStateOf("Cake")
 
-    init {
+        init {
+            newSearch()
+        }
+
+    fun newSearch(){
         viewModelScope.launch {
             val result = repository.search(
                 token, 1, "carrot"
             )
             recipes.value = result
         }
+    }
+
+    fun onQueryChanged(newQuery: String){
+        query.value = newQuery
     }
 }

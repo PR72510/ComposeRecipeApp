@@ -68,10 +68,8 @@ dependencies {
     implementation("androidx.compose.material:material:1.0.0-beta07")
     // Material design icons
     implementation("androidx.compose.material:material-icons-core:1.0.0-beta07")
-    implementation("androidx.compose.material:material-icons-extended:1.0.0-beta07")
     // Integration with observables
     implementation("androidx.compose.runtime:runtime-livedata:1.0.0-beta07")
-    implementation("androidx.compose.runtime:runtime-rxjava2:1.0.0-beta07")
 
     implementation 'androidx.activity:activity-compose:1.3.0-alpha08'
 

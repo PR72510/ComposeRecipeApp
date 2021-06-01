@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.example.composerecipeapp.presentation.components.CircularIndeterminateProgressBar
 import com.example.composerecipeapp.presentation.components.RecipeCard
 import com.example.composerecipeapp.presentation.components.SearchAppBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,6 +44,7 @@ class RecipeListFragment : Fragment() {
                 val recipes = viewModel.recipes.value
                 val query = viewModel.query.value
                 val selectedCategory = viewModel.selectedCategory.value
+                val isLoading = viewModel.isLoading.value
 
                 Column {
                     SearchAppBar(
@@ -54,13 +56,17 @@ class RecipeListFragment : Fragment() {
                         onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
                         changeScrollPosition = viewModel::changeCategoryScrollPosition
                     )
-                    LazyColumn {
-                        itemsIndexed(
-                            items = recipes
-                        ) { index, recipe ->
-                            RecipeCard(recipe = recipe, onClick = {})
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        LazyColumn {
+                            itemsIndexed(
+                                items = recipes
+                            ) { index, recipe ->
+                                RecipeCard(recipe = recipe, onClick = {})
+                            }
                         }
+                        CircularIndeterminateProgressBar(isVisible = isLoading)
                     }
+
                 }
             }
         }

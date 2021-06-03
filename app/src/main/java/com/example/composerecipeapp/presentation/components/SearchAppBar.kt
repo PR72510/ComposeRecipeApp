@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -32,14 +33,15 @@ fun SearchAppBar(
     categoryScrollPosition: Int,
     selectedCategory: FoodCategory?,
     onSelectedCategoryChanged: (String) -> Unit,
-    changeScrollPosition: (Int) -> Unit
+    changeScrollPosition: (Int) -> Unit,
+    onToggleTheme: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
 
     Surface(
         modifier = Modifier
             .fillMaxWidth(),
-        color = Color.White,
+        color = MaterialTheme.colors.surface,
         elevation = 8.dp
     ) {
         Column {
@@ -74,6 +76,10 @@ fun SearchAppBar(
                     )
 
                 )
+                IconButton(onClick = { onToggleTheme() },
+                modifier = Modifier.padding(top = 8.dp)) {
+                    Icon(Icons.Filled.MoreVert, contentDescription = null)
+                }
             }
             val scrollState = rememberScrollState()
             val scope = rememberCoroutineScope()

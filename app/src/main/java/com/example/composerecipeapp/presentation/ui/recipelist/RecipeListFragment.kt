@@ -14,7 +14,10 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -57,21 +60,31 @@ class RecipeListFragment : Fragment() {
                     val selectedCategory = viewModel.selectedCategory.value
                     val isLoading = viewModel.isLoading.value
 
-                    Column {
-                        SearchAppBar(
-                            query = query,
-                            onQueryChanged = viewModel::onQueryChanged,
-                            onNewSearch = viewModel::newSearch,
-                            categoryScrollPosition = viewModel.categoryScrollPosition,
-                            selectedCategory = selectedCategory,
-                            onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
-                            changeScrollPosition = viewModel::changeCategoryScrollPosition,
-                            onToggleTheme = application::toggleLightTheme
-                        )
-
-                        Box(modifier = Modifier
-                            .fillMaxSize()
-                            .background(color = MaterialTheme.colors.background)) {
+                    Scaffold(
+                        topBar = {
+                            SearchAppBar(
+                                query = query,
+                                onQueryChanged = viewModel::onQueryChanged,
+                                onNewSearch = viewModel::newSearch,
+                                categoryScrollPosition = viewModel.categoryScrollPosition,
+                                selectedCategory = selectedCategory,
+                                onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
+                                changeScrollPosition = viewModel::changeCategoryScrollPosition,
+                                onToggleTheme = application::toggleLightTheme
+                            )
+                        },
+//                        bottomBar = {
+//                            MyBottomBar()
+//                        },
+//                        drawerContent = {
+//                            MyDrawer()
+//                        }
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(color = MaterialTheme.colors.surface)
+                        ) {
                             LazyColumn {
                                 itemsIndexed(
                                     items = recipes
@@ -82,8 +95,50 @@ class RecipeListFragment : Fragment() {
                             CircularIndeterminateProgressBar(isVisible = isLoading)
                         }
                     }
+
+                    Column {
+
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun MyBottomBar(
+) {
+    BottomNavigation(elevation = 12.dp) {
+        BottomNavigationItem(selected = false, onClick = { }, icon = {
+            Icon(
+                imageVector = Icons.Default.ThumbUp,
+                contentDescription = null
+            )
+        })
+
+        BottomNavigationItem(selected = true, onClick = { }, icon = {
+            Icon(
+                imageVector = Icons.Default.AccountBox,
+                contentDescription = null
+            )
+        })
+
+        BottomNavigationItem(selected = false, onClick = { }, icon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = null
+            )
+        })
+    }
+}
+
+@Composable
+fun MyDrawer(){
+    Column {
+        Text(text = "Item 1")
+        Text(text = "Item 2")
+        Text(text = "Item 3")
+        Text(text = "Item 4")
+        Text(text = "Item 5")
     }
 }

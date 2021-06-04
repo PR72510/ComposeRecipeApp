@@ -72,8 +72,7 @@ fun SnackbarDemo(
                         modifier = Modifier.clickable { onHideSnackbar() }
                     )
                 },
-
-                ) {
+            ) {
                 Text(text = "This is a Snackbar")
             }
         }

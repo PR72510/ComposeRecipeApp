@@ -32,6 +32,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.composerecipeapp.BaseApplication
 import com.example.composerecipeapp.presentation.components.*
+import com.example.composerecipeapp.presentation.components.util.SnackbarController
 import com.example.composerecipeapp.presentation.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -43,7 +44,10 @@ class RecipeListFragment : Fragment() {
     @Inject
     lateinit var application: BaseApplication
 
-    val viewModel: RecipeListViewModel by viewModels()
+    @Inject
+    lateinit var snackbarController: SnackbarController
+
+    private val viewModel: RecipeListViewModel by viewModels()
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreateView(
@@ -54,70 +58,65 @@ class RecipeListFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
 
-//                val isShowing = remember { mutableStateOf(false) }
-                val snackBarHostState = remember { SnackbarHostState() }
-                Column {
-                    Button(onClick = {
-                        lifecycleScope.launch(){
-                            snackBarHostState.showSnackbar(
-                                message = "SnackBar with host state",
-
-                                actionLabel = "Hide"
+                AppTheme(darkTheme = application.isDark.value) {
+                    val recipes = viewModel.recipes.value
+                    val query = viewModel.query.value
+                    val selectedCategory = viewModel.selectedCategory.value
+                    val isLoading = viewModel.isLoading.value
+                    val scaffoldState = rememberScaffoldState()
+                    Scaffold(
+                        topBar = {
+                            SearchAppBar(
+                                query = query,
+                                onQueryChanged = viewModel::onQueryChanged,
+                                onNewSearch = {
+                                    if (viewModel.selectedCategory.value?.value == "Milk") {
+                                        snackbarController.getScope().launch {
+                                            snackbarController.showSnackbar(
+                                                scaffoldState = scaffoldState,
+                                                message = "Invalid category: Milk!",
+                                                actionLabel = "Hide",
+                                            )
+                                        }
+                                    } else {
+                                        viewModel.newSearch()
+                                    }
+                                },
+                                categoryScrollPosition = viewModel.categoryScrollPosition,
+                                selectedCategory = selectedCategory,
+                                onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
+                                changeScrollPosition = viewModel::changeCategoryScrollPosition,
+                                onToggleTheme = application::toggleLightTheme
+                            )
+                        },
+                        scaffoldState = scaffoldState,
+                        snackbarHost = {
+                            scaffoldState.snackbarHostState
+                        }
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(color = MaterialTheme.colors.surface)
+                        ) {
+                            LazyColumn {
+                                itemsIndexed(
+                                    items = recipes
+                                ) { index, recipe ->
+                                    RecipeCard(recipe = recipe, onClick = {})
+                                }
+                            }
+                            CircularIndeterminateProgressBar(isVisible = isLoading)
+                            DefaultSnackbar(
+                                snackbarHostState = scaffoldState.snackbarHostState,
+                                onDismiss = {
+                                    scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                                },
+                                modifier = Modifier.align(Alignment.BottomCenter)
                             )
                         }
-                    }) {
-                        Text(text = "Show snackbar")
                     }
                 }
-                DecoupledSnackbar(snackbarHostState = snackBarHostState)
-//                SnackbarDemo(
-//                    isShowing = isShowing.value,
-//                ) {
-//                    isShowing.value = false
-//                }
-
-//                AppTheme(darkTheme = application.isDark.value) {
-//                    val recipes = viewModel.recipes.value
-//                    val query = viewModel.query.value
-//                    val selectedCategory = viewModel.selectedCategory.value
-//                    val isLoading = viewModel.isLoading.value
-//
-//                    Scaffold(
-//                        topBar = {
-//                            SearchAppBar(
-//                                query = query,
-//                                onQueryChanged = viewModel::onQueryChanged,
-//                                onNewSearch = viewModel::newSearch,
-//                                categoryScrollPosition = viewModel.categoryScrollPosition,
-//                                selectedCategory = selectedCategory,
-//                                onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
-//                                changeScrollPosition = viewModel::changeCategoryScrollPosition,
-//                                onToggleTheme = application::toggleLightTheme
-//                            )
-//                        },
-////                        bottomBar = {
-////                            MyBottomBar()
-////                        },
-////                        drawerContent = {
-////                            MyDrawer()
-////                        }
-//                    ) {
-//                        Box(
-//                            modifier = Modifier
-//                                .fillMaxSize()
-//                                .background(color = MaterialTheme.colors.surface)
-//                        ) {
-//                            LazyColumn {
-//                                itemsIndexed(
-//                                    items = recipes
-//                                ) { index, recipe ->
-//                                    RecipeCard(recipe = recipe, onClick = {})
-//                                }
-//                            }
-//                            CircularIndeterminateProgressBar(isVisible = isLoading)
-//                        }
-//                    }
-//                }
             }
         }
     }

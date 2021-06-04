@@ -29,12 +29,12 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.composerecipeapp.BaseApplication
-import com.example.composerecipeapp.presentation.components.CircularIndeterminateProgressBar
-import com.example.composerecipeapp.presentation.components.RecipeCard
-import com.example.composerecipeapp.presentation.components.SearchAppBar
+import com.example.composerecipeapp.presentation.components.*
 import com.example.composerecipeapp.presentation.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -54,91 +54,71 @@ class RecipeListFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
 
-                AppTheme(darkTheme = application.isDark.value) {
-                    val recipes = viewModel.recipes.value
-                    val query = viewModel.query.value
-                    val selectedCategory = viewModel.selectedCategory.value
-                    val isLoading = viewModel.isLoading.value
+//                val isShowing = remember { mutableStateOf(false) }
+                val snackBarHostState = remember { SnackbarHostState() }
+                Column {
+                    Button(onClick = {
+                        lifecycleScope.launch(){
+                            snackBarHostState.showSnackbar(
+                                message = "SnackBar with host state",
 
-                    Scaffold(
-                        topBar = {
-                            SearchAppBar(
-                                query = query,
-                                onQueryChanged = viewModel::onQueryChanged,
-                                onNewSearch = viewModel::newSearch,
-                                categoryScrollPosition = viewModel.categoryScrollPosition,
-                                selectedCategory = selectedCategory,
-                                onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
-                                changeScrollPosition = viewModel::changeCategoryScrollPosition,
-                                onToggleTheme = application::toggleLightTheme
+                                actionLabel = "Hide"
                             )
-                        },
-//                        bottomBar = {
-//                            MyBottomBar()
-//                        },
-//                        drawerContent = {
-//                            MyDrawer()
-//                        }
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(color = MaterialTheme.colors.surface)
-                        ) {
-                            LazyColumn {
-                                itemsIndexed(
-                                    items = recipes
-                                ) { index, recipe ->
-                                    RecipeCard(recipe = recipe, onClick = {})
-                                }
-                            }
-                            CircularIndeterminateProgressBar(isVisible = isLoading)
                         }
-                    }
-
-                    Column {
-
+                    }) {
+                        Text(text = "Show snackbar")
                     }
                 }
+                DecoupledSnackbar(snackbarHostState = snackBarHostState)
+//                SnackbarDemo(
+//                    isShowing = isShowing.value,
+//                ) {
+//                    isShowing.value = false
+//                }
+
+//                AppTheme(darkTheme = application.isDark.value) {
+//                    val recipes = viewModel.recipes.value
+//                    val query = viewModel.query.value
+//                    val selectedCategory = viewModel.selectedCategory.value
+//                    val isLoading = viewModel.isLoading.value
+//
+//                    Scaffold(
+//                        topBar = {
+//                            SearchAppBar(
+//                                query = query,
+//                                onQueryChanged = viewModel::onQueryChanged,
+//                                onNewSearch = viewModel::newSearch,
+//                                categoryScrollPosition = viewModel.categoryScrollPosition,
+//                                selectedCategory = selectedCategory,
+//                                onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
+//                                changeScrollPosition = viewModel::changeCategoryScrollPosition,
+//                                onToggleTheme = application::toggleLightTheme
+//                            )
+//                        },
+////                        bottomBar = {
+////                            MyBottomBar()
+////                        },
+////                        drawerContent = {
+////                            MyDrawer()
+////                        }
+//                    ) {
+//                        Box(
+//                            modifier = Modifier
+//                                .fillMaxSize()
+//                                .background(color = MaterialTheme.colors.surface)
+//                        ) {
+//                            LazyColumn {
+//                                itemsIndexed(
+//                                    items = recipes
+//                                ) { index, recipe ->
+//                                    RecipeCard(recipe = recipe, onClick = {})
+//                                }
+//                            }
+//                            CircularIndeterminateProgressBar(isVisible = isLoading)
+//                        }
+//                    }
+//                }
             }
         }
-    }
-}
-
-@Composable
-fun MyBottomBar(
-) {
-    BottomNavigation(elevation = 12.dp) {
-        BottomNavigationItem(selected = false, onClick = { }, icon = {
-            Icon(
-                imageVector = Icons.Default.ThumbUp,
-                contentDescription = null
-            )
-        })
-
-        BottomNavigationItem(selected = true, onClick = { }, icon = {
-            Icon(
-                imageVector = Icons.Default.AccountBox,
-                contentDescription = null
-            )
-        })
-
-        BottomNavigationItem(selected = false, onClick = { }, icon = {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = null
-            )
-        })
-    }
-}
-
-@Composable
-fun MyDrawer(){
-    Column {
-        Text(text = "Item 1")
-        Text(text = "Item 2")
-        Text(text = "Item 3")
-        Text(text = "Item 4")
-        Text(text = "Item 5")
     }
 }

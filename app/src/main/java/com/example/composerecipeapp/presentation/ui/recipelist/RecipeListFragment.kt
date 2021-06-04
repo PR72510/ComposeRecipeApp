@@ -64,6 +64,9 @@ class RecipeListFragment : Fragment() {
                     val selectedCategory = viewModel.selectedCategory.value
                     val isLoading = viewModel.isLoading.value
                     val scaffoldState = rememberScaffoldState()
+
+                    val page = viewModel.page.value
+
                     Scaffold(
                         topBar = {
                             SearchAppBar(
@@ -103,6 +106,10 @@ class RecipeListFragment : Fragment() {
                                 itemsIndexed(
                                     items = recipes
                                 ) { index, recipe ->
+                                    viewModel.onChangeRecipeScrollPosition(index)
+                                    if((index + 1) >= (page * PAGE_SIZE) && !isLoading){
+                                        viewModel.nextPage()
+                                    }
                                     RecipeCard(recipe = recipe, onClick = {})
                                 }
                             }

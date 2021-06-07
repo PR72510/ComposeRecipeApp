@@ -32,6 +32,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.composerecipeapp.BaseApplication
 import com.example.composerecipeapp.presentation.components.*
+import com.example.composerecipeapp.presentation.components.util.RecipeListEvent
 import com.example.composerecipeapp.presentation.components.util.SnackbarController
 import com.example.composerecipeapp.presentation.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -82,7 +83,7 @@ class RecipeListFragment : Fragment() {
                                             )
                                         }
                                     } else {
-                                        viewModel.newSearch()
+                                        viewModel.onTriggerEvent(RecipeListEvent.NewSearchEvent)
                                     }
                                 },
                                 categoryScrollPosition = viewModel.categoryScrollPosition,
@@ -108,7 +109,7 @@ class RecipeListFragment : Fragment() {
                                 ) { index, recipe ->
                                     viewModel.onChangeRecipeScrollPosition(index)
                                     if((index + 1) >= (page * PAGE_SIZE) && !isLoading){
-                                        viewModel.nextPage()
+                                        viewModel.onTriggerEvent(RecipeListEvent.NewPageEvent)
                                     }
                                     RecipeCard(recipe = recipe, onClick = {})
                                 }

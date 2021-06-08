@@ -9,21 +9,28 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 
 @Composable
 fun CircularIndeterminateProgressBar(
-    isVisible: Boolean
+    isVisible: Boolean,
+    verticalBias: Float
 ) {
     if (isVisible) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            horizontalArrangement = Arrangement.Center
+        ConstraintLayout(
+            modifier = Modifier.fillMaxWidth()
         ) {
+            val progressBar = createRef()
+            val topBias = createGuidelineFromTop(verticalBias)
             CircularProgressIndicator(
+                modifier = Modifier.constrainAs(progressBar) {
+                    top.linkTo(topBias)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                },
                 color = MaterialTheme.colors.primary
             )
+
         }
     }
 }

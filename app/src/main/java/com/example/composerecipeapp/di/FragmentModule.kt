@@ -18,7 +18,7 @@ object FragmentModule {
     @Provides
     @FragmentScoped
     fun provideLifecycleCoroutineScope(fragment: Fragment): CoroutineScope =
-        (fragment as Fragment).lifecycleScope
+        fragment.lifecycleScope
 
     @Provides
     @FragmentScoped
